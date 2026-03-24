@@ -16,7 +16,9 @@ app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "https://ankura-zeta.vercel.app"
+        "https://ankura-zeta.vercel.app",
+        "https://www.ankura.site",
+        "https://ankura.site",
     ],
     allow_credentials=True,
     allow_methods=["*"],
