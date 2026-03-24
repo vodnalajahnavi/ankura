@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Seed Dashboard</title>
+
+    <!-- Custom styling -->
+    <style>
+
+      /* Container */
+      #google_translate_element {
+        position: fixed;
+        top: 15px;
+        right: 15px;
+        z-index: 9999;
+      }
+
+      /* Hide ugly default text */
+      .goog-logo-link {
+        display: none !important;
+      }
+
+      .goog-te-gadget {
+        font-size: 0px !important;
+      }
+
+      .goog-te-gadget span {
+        display: none !important;
+      }
+
+      /* Style dropdown */
+      .goog-te-combo {
+        background-color: #16a34a;
+        color: white;
+        border: none;
+        padding: 8px 14px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      }
+
+      .goog-te-combo:hover {
+        background-color: #15803d;
+      }
+
+      /* Hide top banner */
+      .goog-te-banner-frame {
+        display: none !important;
+      }
+
+      body {
+        top: 0px !important;
+      }
+
+    </style>
+
+  </head>
+
+  <body>
+
+    <!-- Styled Translate Widget -->
+    <div id="google_translate_element"></div>
+
+    <!-- React root -->
+    <div id="root"></div>
+
+    <script type="module" src="/src/main.jsx"></script>
+
+    <!-- Google Translate Init -->
+    <script>
+      function googleTranslateElementInit() {
+        new google.translate.TranslateElement(
+          {
+            pageLanguage: 'en',
+            includedLanguages: 'en,hi,te',
+            autoDisplay: false
+          },
+          'google_translate_element'
+        );
+      }
+    </script>
+
+    <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+  </body>
+</html>
