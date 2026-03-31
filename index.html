@@ -1,90 +1,93 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Seed Dashboard</title>
 
-    <!-- Custom styling -->
-    <style>
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="/logo.jpg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ANKURA — Smart Seed Intelligence for Better Yields</title>
+  <meta name="description"
+    content="ANKURA is an AI-powered seed quality, viability & yield prediction platform for precision agriculture." />
+  <meta name="theme-color" content="#16a34a" />
 
-      /* Container */
-      #google_translate_element {
-        position: fixed;
-        top: 15px;
-        right: 15px;
-        z-index: 9999;
-      }
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet" />
 
-      /* Hide ugly default text */
-      .goog-logo-link {
-        display: none !important;
-      }
+  <!-- Google Translate Init -->
+  <script>
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement(
+        {
+          pageLanguage: 'en',
+          includedLanguages: 'en,hi,te,ta,kn,mr',
+          autoDisplay: false
+        },
+        'google_translate_element'
+      );
+    }
 
-      .goog-te-gadget {
-        font-size: 0px !important;
-      }
+    // 🔥 FIXED FUNCTION (handles multiple clicks properly)
+    function changeLanguage(lang) {
+      const interval = setInterval(() => {
+        const select = document.querySelector(".goog-te-combo");
 
-      .goog-te-gadget span {
-        display: none !important;
-      }
+        if (select) {
+          // Step 1: reset to English
+          select.value = "en";
+          select.dispatchEvent(new Event("change"));
 
-      /* Style dropdown */
-      .goog-te-combo {
-        background-color: #16a34a;
-        color: white;
-        border: none;
-        padding: 8px 14px;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 500;
-        cursor: pointer;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-      }
+          // Step 2: apply selected language
+          setTimeout(() => {
+            select.value = lang;
+            select.dispatchEvent(new Event("change"));
+          }, 200);
 
-      .goog-te-combo:hover {
-        background-color: #15803d;
-      }
+          clearInterval(interval);
+        }
+      }, 500);
+    }
+  </script>
 
-      /* Hide top banner */
-      .goog-te-banner-frame {
-        display: none !important;
-      }
+  <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
-      body {
-        top: 0px !important;
-      }
+  <!-- Clean Styling (Hide Google UI) -->
+  <style>
+    body {
+      top: 0px !important;
+    }
 
-    </style>
+    #google_translate_element {
+      display: none;
+    }
 
-  </head>
+    .goog-te-banner-frame.skiptranslate {
+      display: none !important;
+    }
 
-  <body>
+    .goog-logo-link {
+      display: none !important;
+    }
 
-    <!-- Styled Translate Widget -->
-    <div id="google_translate_element"></div>
+    .goog-te-gadget {
+      font-size: 0px !important;
+    }
+  </style>
+</head>
 
-    <!-- React root -->
-    <div id="root"></div>
+<body>
 
-    <script type="module" src="/src/main.jsx"></script>
+  <!-- Hidden Google Translate Element -->
+  <div id="google_translate_element"></div>
 
-    <!-- Google Translate Init -->
-    <script>
-      function googleTranslateElementInit() {
-        new google.translate.TranslateElement(
-          {
-            pageLanguage: 'en',
-            includedLanguages: 'en,hi,te',
-            autoDisplay: false
-          },
-          'google_translate_element'
-        );
-      }
-    </script>
+  <!-- React Root -->
+  <div id="root"></div>
 
-    <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script type="module" src="/src/main.jsx"></script>
 
-  </body>
+</body>
+
 </html>

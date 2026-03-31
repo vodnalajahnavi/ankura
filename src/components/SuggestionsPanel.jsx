@@ -1,125 +1,96 @@
+import { useLanguage } from "../LanguageContext";
+
+const typeConfig = {
+  good: { icon: "✅", class: "suggestion-good", accent: "#16a34a" },
+  warn: { icon: "⚠️", class: "suggestion-warn", accent: "#f59e0b" },
+  bad:  { icon: "❌", class: "suggestion-bad",  accent: "#ef4444" },
+};
+
+function SuggestionItem({ text, type, index }) {
+  const config = typeConfig[type] || typeConfig["warn"];
+  return (
+    <div className={`suggestion-item ${config.class}`} style={{ animationDelay: `${index * 0.06}s` }}>
+      <span style={{ fontSize: "1rem", flexShrink: 0, marginTop: "0.05rem" }}>{config.icon}</span>
+      <p style={{ fontSize: "0.82rem", color: "#374151", margin: 0, lineHeight: 1.6 }}>{text}</p>
+    </div>
+  );
+}
+
 function SuggestionsPanel({ results }) {
+  const { t } = useLanguage();
 
   if (!results) {
     return (
-      <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-200">
-        <h2 className="text-lg font-semibold mb-4">
-          Suggestions & Recommendations
-        </h2>
-        <p className="text-gray-500">
-          Run analysis to receive recommendations.
-        </p>
+      <div className="card" style={{ padding: "1.5rem", height: "100%" }}>
+        <div className="panel-header">
+          <div className="panel-icon panel-icon-amber">💡</div>
+          <div>
+            <h2 className="panel-title">{t("recommendations")}</h2>
+            <p className="panel-sub">{t("recSub")}</p>
+          </div>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "2.5rem 1rem", textAlign: "center" }}>
+          <div style={{
+            width: "72px", height: "72px",
+            background: "linear-gradient(135deg, #fef9c3, #fde68a)", borderRadius: "20px",
+            display: "flex", alignItems: "center", justifyContent: "center", fontSize: "2rem",
+            marginBottom: "1.25rem", boxShadow: "0 4px 16px rgba(0,0,0,0.06)"
+          }}>💡</div>
+          <h3 style={{ fontSize: "1rem", fontWeight: 700, color: "#374151", margin: "0 0 0.45rem" }}>{t("noRecYet")}</h3>
+          <p style={{ fontSize: "0.8rem", color: "#94a3b8", maxWidth: "200px", lineHeight: 1.6, margin: 0 }}>{t("noRecDesc")}</p>
+        </div>
       </div>
     );
   }
 
-  const suggestions = [];
+  const isGood = results.quality === "Good";
+  const backendRecs = results.recommendations;
 
-  // ---------------------------
-  // Quality Analysis
-  // ---------------------------
+  let suggestions = [];
 
-  if (results.quality === "good") {
-    suggestions.push("Seed quality is good and suitable for cultivation.");
+  if (backendRecs && Array.isArray(backendRecs) && backendRecs.length > 0) {
+    // Use dynamic recommendations from backend
+    suggestions = backendRecs.map(text => ({
+      text,
+      type: isGood ? "good" : (text.toLowerCase().includes("avoid") || text.toLowerCase().includes("reduce") ? "warn" : "bad")
+    }));
   } else {
-    suggestions.push(
-      "Seed quality is poor. Consider using certified or fresh seeds."
-    );
+    // Fallback if backend doesn't provide them yet
+    if (isGood) {
+      suggestions.push({ text: t("sug_good1"), type: "good" });
+      suggestions.push({ text: t("sug_good2"), type: "good" });
+      suggestions.push({ text: t("sug_good3"), type: "good" });
+    } else {
+      suggestions.push({ text: t("sug_bad1"), type: "bad" });
+      suggestions.push({ text: t("sug_bad2"), type: "bad" });
+      suggestions.push({ text: t("sug_bad3"), type: "bad" });
+      suggestions.push({ text: t("sug_bad4"), type: "bad" });
+    }
   }
 
-  // ---------------------------
-  // Moisture Analysis
-  // ---------------------------
-
-  if (results.moisture < 40) {
-    suggestions.push(
-      "Moisture level is too low. Seeds may be dry. Improve irrigation or storage humidity."
-    );
-  } 
-  else if (results.moisture >= 40 && results.moisture <= 50) {
-    suggestions.push(
-      "Moisture level is optimal for germination."
-    );
-  } 
-  else {
-    suggestions.push(
-      "Moisture level is too high. Excess moisture can cause fungal growth and poor germination."
-    );
-  }
-
-  // ---------------------------
-  // Germination Analysis
-  // ---------------------------
-
-  if (results.germination >= 85) {
-    suggestions.push(
-      "High germination probability. Seeds are suitable for high productivity farming."
-    );
-  } 
-  else if (results.germination >= 65) {
-    suggestions.push(
-      "Moderate germination probability. Ensure proper irrigation and nutrient supply."
-    );
-  } 
-  else {
-    suggestions.push(
-      "Low germination probability. Consider seed treatment or replacing the seed batch."
-    );
-  }
-
-  // ---------------------------
-  // Yield Analysis
-  // ---------------------------
-
-  if (results.yieldPotential >= 85) {
-    suggestions.push(
-      "Yield potential is excellent under proper farming practices."
-    );
-  } 
-  else if (results.yieldPotential >= 60) {
-    suggestions.push(
-      "Yield potential is moderate. Improve soil fertility and irrigation management."
-    );
-  } 
-  else {
-    suggestions.push(
-      "Yield potential is low. Consider improving soil nutrients and seed quality."
-    );
-  }
-
-  // ---------------------------
-  // Advanced Recommendations
-  // ---------------------------
-
-  if (results.moisture > 50) {
-    suggestions.push(
-      "High moisture may increase fungal risk. Ensure proper drying and storage conditions."
-    );
-  }
-
-  if (results.germination < 60 && results.quality === "good") {
-    suggestions.push(
-      "Even though seed quality is good, environmental conditions may reduce germination."
-    );
-  }
-
-  if (results.moisture < 40 && results.germination < 70) {
-    suggestions.push(
-      "Low moisture combined with reduced germination suggests irrigation improvements."
-    );
-  }
+  const goodCount = suggestions.filter(s => s.type === "good").length;
+  const warnCount = suggestions.filter(s => s.type === "warn").length;
+  const badCount  = suggestions.filter(s => s.type === "bad").length;
 
   return (
-    <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-200">
-      <h2 className="text-lg font-semibold mb-4">
-        Suggestions & Recommendations
-      </h2>
-
-      <ul className="list-disc pl-5 space-y-2 text-gray-700">
-        {suggestions.map((s, i) => (
-          <li key={i}>{s}</li>
-        ))}
-      </ul>
+    <div className="card fade-in" style={{ padding: "1.5rem", height: "100%" }}>
+      <div className="panel-header" style={{ justifyContent: "space-between" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <div className="panel-icon panel-icon-amber">💡</div>
+          <div>
+            <h2 className="panel-title">{t("recommendations")}</h2>
+            <p className="panel-sub">{suggestions.length} {t("insightsGenerated")}</p>
+          </div>
+        </div>
+        <div style={{ display: "flex", gap: "0.3rem" }}>
+          {goodCount > 0 && <span className="badge badge-good">{goodCount} ✓</span>}
+          {warnCount > 0 && <span className="badge badge-warn">{warnCount} !</span>}
+          {badCount  > 0 && <span className="badge badge-bad">{badCount} ✗</span>}
+        </div>
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+        {suggestions.map((s, i) => <SuggestionItem key={i} text={s.text} type={s.type} index={i} />)}
+      </div>
     </div>
   );
 }
